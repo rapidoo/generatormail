@@ -32,10 +32,9 @@ mail.init_app(app)
 
 
 
-@app.route("/pdf")
+@app.route("/send/pdf")
 def index():
 
-	array = [[1,2], [3, 4]]
  	msg = Message("Hello",
                   sender="flebris@outlook.com",
                   recipients=["flebris@gmail.com"])
@@ -47,60 +46,37 @@ def index():
 
 @app.route("/template")
 def temp():
-	array = [[1,2], [3, 4]]
  	return render_template('template.html', data=model.getItems())
 
-@app.route("/test_xls", methods=['GET'])
-def download_file():
-	array = [[1,2], [3, 4]]
-	return excel.make_response_from_array(array, "xls", status=200)
 
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
-
-
-
+@app.route("/download/pdf")
+def getXls():
+	output = create_pdf(render_template('template.html', data=model.getItems()))
+	filename = "test.pdf"
+	return genResponse(output, filename)
 #... code for setting up Flask
 
-@app.route('/xls/')
+@app.route('/download/xls')
 def export_view():
-    #########################
+	output = genXls()
+	filename = "test.xls"
+	return genResponse(output, filename)
+
+def genResponse(output, filename):
+#########################
     # Code for creating Flask
     # response
     #########################
     response = Response()
     response.status_code = 200
 
-
-    ##################################
-    # Code for creating Excel data and
-    # inserting into Flask response
-    ##################################
-    workbook = xlwt.Workbook()
-    ws = workbook.add_sheet('A Test Sheet')
-
-    i = 1
-    ws.write(0, 0, "id")
-    ws.write(0, 1, "data")
-    
-    for item in model.getItems():
-   
-    	ws.write(i, 0, item['id'])
-    	ws.write(i, 1, item['data'])
-    	i = i +1
-    
-    #.... code here for adding worksheets and cells
-
-    output = StringIO.StringIO()
-    workbook.save(output)
     response.data = output.getvalue()
 
     ################################
     # Code for setting correct
     # headers for jquery.fileDownload
     #################################
-    filename = "test.xls"
+        
     mimetype_tuple = mimetypes.guess_type(filename)
 
     #HTTP headers for forcing file download
@@ -130,6 +106,33 @@ def export_view():
     #################################
     return response
 
+
+
+def genXls():
+
+    ##################################
+    # Code for creating Excel data and
+    # inserting into Flask response
+    ##################################
+    workbook = xlwt.Workbook()
+    ws = workbook.add_sheet('A Test Sheet')
+
+    i = 1
+    ws.write(0, 0, "id")
+    ws.write(0, 1, "data")
+    
+    for item in model.getItems():
+   
+    	ws.write(i, 0, item['id'])
+    	ws.write(i, 1, item['data'])
+    	i = i +1
+    
+    #.... code here for adding worksheets and cells
+
+    output = StringIO.StringIO()
+    workbook.save(output)
+
+    return output
 
 if __name__ == '__main__':
 	app.debug = True
