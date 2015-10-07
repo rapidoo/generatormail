@@ -3,6 +3,7 @@ from flask_mail import Mail, Message
 from flask.ext import excel
 from pdfs import create_pdf
 
+import model
 import pyexcel.ext.xls 
 
 import xlwt
@@ -29,31 +30,27 @@ mail = Mail()
 mail.init_app(app)
 # ...
 
-@app.route('/your/url')
-def your_view():
-    subject = "Mail with PDF"
-    receiver = "flebris@gmail.com"
-    mail_to_be_sent = Message(subject=subject, recipients=[receiver])
-    mail_to_be_sent.body = "This email contains PDF."
-    pdf = create_pdf(render_template('template.html'))
-    mail_to_be_sent.attach("file.pdf", "application/pdf", pdf.getvalue())
-    mail_ext.send(mail_to_be_sent)
-    return redirect(url_for('other_view'))
 
-@app.route("/test")
+
+@app.route("/pdf")
 def index():
 
-	user = {'nickname': 'Miguel'}
+	array = [[1,2], [3, 4]]
  	msg = Message("Hello",
                   sender="flebris@outlook.com",
                   recipients=["flebris@gmail.com"])
  	msg.body = "This is the email body"
- 	pdf = create_pdf(render_template('template.html', name='fred2'))
+ 	pdf = create_pdf(render_template('template.html', data=model.getItems()))
  	msg.attach("file.pdf", "application/pdf",  pdf.getvalue())
  	mail.send(msg)
  	return 'Sent'
 
-@app.route("/download", methods=['GET'])
+@app.route("/template")
+def temp():
+	array = [[1,2], [3, 4]]
+ 	return render_template('template.html', data=model.getItems())
+
+@app.route("/test_xls", methods=['GET'])
 def download_file():
 	array = [[1,2], [3, 4]]
 	return excel.make_response_from_array(array, "xls", status=200)
@@ -66,7 +63,7 @@ def hello_world():
 
 #... code for setting up Flask
 
-@app.route('/export/')
+@app.route('/xls/')
 def export_view():
     #########################
     # Code for creating Flask
@@ -82,12 +79,17 @@ def export_view():
     ##################################
     workbook = xlwt.Workbook()
     ws = workbook.add_sheet('A Test Sheet')
-    ws.write(0, 0, 1234.56)
-    ws.write(1, 0, 3)
-    ws.write(2, 0, 1)
-    ws.write(2, 1, 1)
-    ws.write(2, 2, xlwt.Formula("A3+B3"))
 
+    i = 1
+    ws.write(0, 0, "id")
+    ws.write(0, 1, "data")
+    
+    for item in model.getItems():
+   
+    	ws.write(i, 0, item['id'])
+    	ws.write(i, 1, item['data'])
+    	i = i +1
+    
     #.... code here for adding worksheets and cells
 
     output = StringIO.StringIO()

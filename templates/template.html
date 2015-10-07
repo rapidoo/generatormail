@@ -14,7 +14,10 @@
                 <tr style="border: 1px solid #000000;">
                     <td width="100%">
                         <h3 style="text-align: center;">Some subtitle</h3>
-                        <div>{{name}}</div>
+                         {% for row in data %}
+                             <div >{{ row .id}}</div> <div >{{ row.data }}</div>
+                        {% endfor %}
+
                     </td>
                 </tr>
             </tbody>
