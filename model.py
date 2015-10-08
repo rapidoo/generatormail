@@ -33,3 +33,5 @@ def getItems():
 #alltable = users.scan()
 
 #print alltable
+#for item in getItems():
+#	print item

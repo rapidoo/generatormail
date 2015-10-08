@@ -12,6 +12,7 @@ import mimetypes
 from flask import Response
 from werkzeug.datastructures import Headers
 
+from database import getMarvel
 
 app = Flask(__name__)
 
@@ -35,13 +36,15 @@ def send_static(path):
 
 @app.route("/")
 def temp():
- 	return render_template('index.html', data=model.getItems())
+	print getMarvel()
+ 	return render_template('index.html', data=getMarvel())
 
 
 @app.route("/send/pdf")
 def send_pdf():
 	filename = "file.pdf"
-	pdf = create_pdf(render_template('template.html', data=model.getItems()))
+	#pdf = create_pdf(render_template('template.html', data=model.getItems()))
+ 	pdf = create_pdf(render_template('template.html', data=getMarvel()))
  	return SendMail(pdf, filename, "flebris@gmail.com")
 
 @app.route("/send/xls")
@@ -53,7 +56,7 @@ def send_xls():
 
 @app.route("/download/pdf")
 def get_pdf():
-	output = create_pdf(render_template('template.html', data=model.getItems()))
+	output = create_pdf(render_template('template.html', data=getMarvel()))
 	filename = "test.pdf"
 	return genResponse(output, filename)
 #... code for setting up Flask
@@ -135,7 +138,7 @@ def genXls():
     ws.write(0, 0, "id")
     ws.write(0, 1, "data")
     
-    for item in model.getItems():
+    for item in getMarvel():
    
     	ws.write(i, 0, item['id'])
     	ws.write(i, 1, item['data'])

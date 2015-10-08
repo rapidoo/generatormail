@@ -11,8 +11,9 @@
                 </tr>
               {% for row in data %}
                 <tr style="border: 1px solid #000000;">
-                    <td width="20%">{{ row .id}}</td>
-                    <td width="80%">{{ row.data }}</td>
+                    <td width="20%">{{ row.name}}</td>
+                    <td width="70%">{{ row.description }}</td>
+                    <td width="10%">{{ row.available}}</td>
                 </tr>
                  {% endfor %}
             </tbody>
