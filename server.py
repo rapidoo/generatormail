@@ -23,44 +23,57 @@ app.config.update(
 	MAIL_USE_SSL=False,
 	MAIL_USE_TLS = True,
 	MAIL_USERNAME = 'flebris@outlook.com',
-	MAIL_PASSWORD = 'cspr!3204'
+	MAIL_PASSWORD = 'Passwordtest35'
 	)
 
 mail = Mail()
 mail.init_app(app)
-# ...
 
 
-
-@app.route("/send/pdf")
-def index():
-
- 	msg = Message("Hello",
-                  sender="flebris@outlook.com",
-                  recipients=["flebris@gmail.com"])
- 	msg.body = "This is the email body"
- 	pdf = create_pdf(render_template('template.html', data=model.getItems()))
- 	msg.attach("file.pdf", "application/pdf",  pdf.getvalue())
- 	mail.send(msg)
- 	return 'Sent'
 
 @app.route("/template")
 def temp():
  	return render_template('template.html', data=model.getItems())
 
 
+@app.route("/send/pdf")
+def send_pdf():
+	filename = "file.pdf"
+	pdf = create_pdf(render_template('template.html', data=model.getItems()))
+ 	return SendMail(pdf, filename, "flebris@gmail.com")
+
+@app.route("/send/xls")
+def send_xls():
+	filename = "file.xls"
+	output = genXls()
+ 	return SendMail(output, filename, "flebris@gmail.com")
+
+
 @app.route("/download/pdf")
-def getXls():
+def get_pdf():
 	output = create_pdf(render_template('template.html', data=model.getItems()))
 	filename = "test.pdf"
 	return genResponse(output, filename)
 #... code for setting up Flask
 
 @app.route('/download/xls')
-def export_view():
+def get_xls():
 	output = genXls()
 	filename = "test.xls"
 	return genResponse(output, filename)
+
+
+
+def SendMail(output, filename, to):
+	msg = Message("Hello",
+                  sender="flebris@outlook.com",
+                  recipients=[to])
+ 	msg.body = "This is the email body"
+ 	
+ 	msg.attach(filename, "application/pdf",  output.getvalue())
+ 	mail.send(msg)
+ 	return 'Sent'
+
 
 def genResponse(output, filename):
 #########################
