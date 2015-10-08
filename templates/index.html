@@ -1,0 +1,23 @@
+<html>
+    <head>
+    </head>
+    <body>
+    {% block body %}
+        <h2>Demo App Mail</h2>
+        <a href="/send/pdf">send by Pdf</a>  <a href="/send/xls">send by Xls</a>  <a href="/download/pdf">Download by Pdf</a>  <a href="/download/xls">Download by Xls</a>
+        <table width="100%" cellpadding="4" cellspacing="0" repeat="1">
+                <tr>
+                    <td>id</td><td>data</td>
+                </tr>
+              {% for row in data %}
+                <tr style="border: 1px solid #000000;">
+                    <td width="20%">{{ row .id}}</td>
+                    <td width="80%">{{ row.data }}</td>
+                </tr>
+                 {% endfor %}
+            </tbody>
+        </table>
+        <hr style="margin: 3em 0;"/>
+    {% endblock %}
+    </body>
+</html>

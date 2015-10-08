@@ -29,11 +29,13 @@ app.config.update(
 mail = Mail()
 mail.init_app(app)
 
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
 
-
-@app.route("/template")
+@app.route("/")
 def temp():
- 	return render_template('template.html', data=model.getItems())
+ 	return render_template('index.html', data=model.getItems())
 
 
 @app.route("/send/pdf")
@@ -61,7 +63,6 @@ def get_xls():
 	output = genXls()
 	filename = "test.xls"
 	return genResponse(output, filename)
-
 
 
 def SendMail(output, filename, to):
