@@ -1,3 +1,3 @@
-from database import populate
+from database import populate2
 
-populate()
+populate2()

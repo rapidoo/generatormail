@@ -50,7 +50,7 @@ def send_pdf():
 @app.route("/send/xls")
 def send_xls():
 	filename = "file.xls"
-	output = genXls(getMarvel())
+	output =  useTemplate(getMarvel())
  	return SendMail(output, filename, "flebris@gmail.com")
 
 

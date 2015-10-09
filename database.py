@@ -6,6 +6,19 @@ cluster = Cluster()
 session = cluster.connect("simplex")
 
 
+def populate2():
+
+        for i in  range(200):
+
+                        session.execute(
+                            """
+                            INSERT INTO marvels2 (name, description, available)
+                            VALUES (%s, %s, %s)
+                            """,
+                            ('name'+str(i), 'description'+str(i), 'available'+str(i))
+                        )
+
+
 
 
 #rows = session.execute('SELECT name, age, email FROM users')
