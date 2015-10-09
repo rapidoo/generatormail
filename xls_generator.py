@@ -33,6 +33,31 @@ def genXls(rows):
 
     return output
 
+def _getOutCell(outSheet, colIndex, rowIndex):
+    """ HACK: Extract the internal xlwt cell representation. """
+
+    row = outSheet._Worksheet__rows.get(rowIndex)
+    if not row: return None
+
+    cell = row._Row__cells.get(colIndex)
+    return cell
+
+def setOutCell(outSheet, col, row, value):
+    """ Change cell value without changing formatting. """
+    # HACK to retain cell style.
+    previousCell = _getOutCell(outSheet, col, row%2+6)
+    # END HACK, PART I
+
+    outSheet.write(row, col, value)
+
+    # HACK, PART II
+    if previousCell:
+        newCell = _getOutCell(outSheet, col, row)
+        if newCell:
+            newCell.xf_idx = previousCell.xf_idx
+    # END HACK
+
+
 
 def useTemplate(rows):
 
@@ -42,7 +67,7 @@ def useTemplate(rows):
     col_description = 2
     col_avalaible = 3
     
-    rb = open_workbook('./Book.xls',formatting_info=True)
+    rb = open_workbook('./Book.xlt',formatting_info=True)
 
     r_sheet = rb.sheet_by_index(0) # read only copy to introspect the file
     wb = copy(rb) # a writable copy (I can't read values out of this, only write to it)
@@ -51,9 +76,12 @@ def useTemplate(rows):
 
     for row in rows:
       
-        w_sheet.write(id_ROW, col_name, row['name'])
-        w_sheet.write(id_ROW, col_description, row['description'])
-        w_sheet.write(id_ROW, col_avalaible, row['available'])
+        setOutCell(w_sheet, col_name, id_ROW, row['name'])
+        setOutCell(w_sheet, col_description, id_ROW, row['description'])
+        setOutCell(w_sheet, col_avalaible, id_ROW, row['available'])
+        #w_sheet.write(id_ROW, col_name, row['name'])
+        #w_sheet.write(id_ROW, col_description, row['description'])
+        #w_sheet.write(id_ROW, col_avalaible, row['available'])
         id_ROW = id_ROW + 1
 
     output = StringIO.StringIO()
