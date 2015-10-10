@@ -4,7 +4,27 @@
     <body>
     {% block body %}
         <h2>Demo App Mail</h2>
-        <a href="/send/pdf">send by Pdf</a>  <a href="/send/xls">send by Xls</a>  <a href="/download/pdf">Download by Pdf</a>  <a href="/download/xls">Download by Xls</a>
+        
+        Send pdf by email
+        <form method="GET" action="/send/pdf" > 
+            <input type="text" name="mailname" value="">
+            <input type="submit" value="Submit">
+        </form>
+        </br>
+        Send xls by email
+        <form method="GET" action="/send/xls" > 
+            <input type="text" name="mailname" value="">
+            <input type="submit" value="Submit">
+        </form>
+        
+
+
+        </br>
+        <a href="/send/pdf">send by Pdf</a>  <a href="/send/xls">send by Xls</a> 
+</br>
+        </br>
+        
+
         <table width="100%" cellpadding="4" cellspacing="0" repeat="1">
                 <tr>
                     <td>id</td><td>data</td>

@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for
 from flask_mail import Mail, Message
 from flask.ext import excel
 from flask import Response
+from flask import request
 
 import StringIO
 import mimetypes
@@ -9,7 +10,7 @@ from werkzeug.datastructures import Headers
 
 from pdfs import create_pdf
 from database import getMarvel
-from xls_generator import genXls, useTemplate
+from xls_generator import useTemplate
 
 
 
@@ -45,13 +46,17 @@ def send_pdf():
 	filename = "file.pdf"
 	#pdf = create_pdf(render_template('template.html', data=model.getItems()))
  	pdf = create_pdf(render_template('template.html', data=getMarvel()))
- 	return SendMail(pdf, filename, "flebris@gmail.com")
+ 	mailname = request.args.get('mailname')
+ 	print 'send mail to :'+mailname
+ 	return SendMail(pdf, filename, mailname)
 
 @app.route("/send/xls")
 def send_xls():
 	filename = "file.xls"
+	mailname = request.args.get('mailname')
+	print 'send mail to :'+mailname
 	output =  useTemplate(getMarvel())
- 	return SendMail(output, filename, "flebris@gmail.com")
+ 	return SendMail(output, filename, mailname)
 
 
 @app.route("/download/pdf")
@@ -68,7 +73,6 @@ def get_xls():
 	return genResponse(output, filename)
 
 
-
 def SendMail(output, filename, to):
 	msg = Message("Hello",
                   sender="flebris@outlook.com",
@@ -78,7 +82,6 @@ def SendMail(output, filename, to):
  	msg.attach(filename, "application/pdf",  output.getvalue())
  	mail.send(msg)
  	return 'Sent'
-
 
 def genResponse(output, filename):
 #########################
